@@ -1,0 +1,23 @@
+{% extends 'eventapp/base.html' %}
+
+{% block title %}
+Edit Event
+{% endblock %}
+
+{% block content %}
+<h2>Edit Event: {{ event.title }}</h2>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ event_form.as_p }}
+
+    <h3>Manage Tickets</h3>
+    {{ ticket_formset.management_form }}
+    {% for form in ticket_formset %}
+        <div class="ticket-form">
+            {{ form.as_p }}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+{% endblock %}

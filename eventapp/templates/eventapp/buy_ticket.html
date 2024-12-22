@@ -1,0 +1,23 @@
+{% extends 'eventapp/base.html' %}
+
+{% block title %}
+Buy Tickets
+{% endblock %}
+
+{% block content %}
+<h2>Buy Tickets for {{ ticket.event.title }}</h2>
+<p><strong>Total Available:</strong> {{ ticket.tickets_available }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <label for="ticket_type">Choose Ticket Type:</label>
+    <select name="ticket_type" id="ticket_type" required>
+        <option value="early_bird">Early Bird - {{ ticket.price_early_bird }}</option>
+        <option value="general">General - {{ ticket.price_general }}</option>
+        <option value="vip">VIP - {{ ticket.price_vip }}</option>
+    </select>
+    <label for="quantity">Number of Tickets:</label>
+    <input type="number" id="quantity" name="quantity" min="1" max="{{ ticket.tickets_available }}" required>
+    <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+</form>
+{% endblock %}

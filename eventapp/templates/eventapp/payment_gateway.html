@@ -1,0 +1,21 @@
+{% extends 'eventapp/base.html' %}
+{% load static %}
+
+{% block title %}
+Payment Gateway
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <h1>Confirm Your Payment</h1>
+    <p><strong>Event:</strong> {{ booking.event.title }}</p>
+    <p><strong>Ticket Type:</strong> {{ booking.ticket_type }}</p>
+    <p><strong>Quantity:</strong> {{ booking.quantity }}</p>
+    <p><strong>Total Price:</strong> ${{ booking.total_price }}</p>
+
+    <form method="POST" action="{% url 'confirm_payment' booking.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Pay Now</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'eventapp/base.html' %}
+
+{% block title %}
+Organizer Dashboard
+{% endblock %}
+
+{% block content %}
+<h2>Organizer Dashboard</h2>
+
+<div class="switch-view-btn">
+    <a href="{% url 'attendee_dashboard' %}" class="btn btn-primary">Switch to Attendee Dashboard</a>
+</div>
+
+<h4>-------------------------------</h4>
+<!-- Create a New Event -->
+<div class="create-event-btn">
+    <a href="{% url 'create_event' %}" class="btn btn-primary">Create Event</a>
+</div>
+
+<!-- Event List -->
+<h3>Your Events</h3>
+{% if event_data %}
+    <ul>
+        {% for data in event_data %}
+        <li>
+            <h2>{{ data.event.title }}</h3>
+            <p><strong>Date:</strong> {{ data.event.date }}</p>
+            <p><strong>Location:</strong> {{ data.event.location }}</p>
+            <p><strong>Category:</strong> {{ data.event.category }}</p>
+            <p><strong>Description:</strong> {{ data.event.description }}</p>
+            <p>
+                {% if data.event.image %}
+                    <img src="{{ data.event.image.url }}" alt="{{ data.event.title }}" style="max-width:30%;">
+                {% endif %}
+            </p> 
+            <a href="{% url 'edit_event' data.event.id %}" class="btn btn-secondary">Edit Event</a>
+            <a href="{% url 'delete_event' data.event.id %}" class="btn btn-danger">Delete Event</a>
+ 
+        </li>
+        <div class="event-summary">
+            <h3>Tickets</h3>
+            <p>Total Tickets Sold: {{ data.total_tickets }}</p>
+            <p>Total Revenue: ${{ data.total_revenue }}</p>
+
+            <h4>Attendee Details:</h4>
+            {% for booking in data.bookings %}
+                <p>
+                    {{ booking.attendee.username }} bought {{ booking.quantity }} tickets 
+                    ({{ booking.ticket_type }}) - ${{ booking.total_price }}
+                    {% if booking.is_refunded %}
+                        <span class="text-danger">(Refunded)</span>
+                    {% endif %}
+                </p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You haven't created any events yet. Start by clicking the "Create Event" button above.</p>
+{% endif %}
+{% endblock %}

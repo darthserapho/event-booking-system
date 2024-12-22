@@ -1,0 +1,37 @@
+{% extends 'eventapp/base.html' %}
+
+{% load widget_tweaks %} 
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Register</h1>
+    <form method="post" class="mx-auto" style="max-width: 400px;">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_username" class="form-label">Username:</label>
+            {{ form.username|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="id_email" class="form-label">Email:</label>
+            {{ form.email|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="id_password1" class="form-label">Password:</label>
+            {{ form.password1|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="id_password2" class="form-label">Confirm Password:</label>
+            {{ form.password2|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="id_user_type" class="form-label">User Type:</label>
+            {{ form.user_type|add_class:"form-control" }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Register</button>
+    </form>
+</div>
+{% endblock %}

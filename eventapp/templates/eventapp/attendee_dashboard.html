@@ -1,0 +1,134 @@
+{% extends 'eventapp/base.html' %}
+
+{% block title %}
+Attendee Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar for Messages -->
+        <div class="col-md-3">
+            <h4>Messages</h4>
+            <div class="messages p-3 border rounded">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} mb-2">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No messages to display.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2>Welcome to the Attendee Dashboard</h2>
+            
+            <!-- Logout Button -->
+            <div class="mb-3">
+                <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+            </div>
+
+            <!-- Switch to Organizer View (for organizers only) -->
+            {% if user.user_type == 'organizer' %}
+            <div class="mb-3">
+                <a href="{% url 'organizer_dashboard' %}" class="btn btn-primary">Switch to Organizer View</a>
+            </div>
+            {% endif %}
+
+            <!-- Booked Tickets -->
+            <section>
+                <h2>Booked Tickets</h2>
+                    {% if booked_tickets %}
+                        <div class="ticket-list">
+                            {% for ticket in booked_tickets %}
+                                <div class="ticket-card">
+                                    <h4>{{ ticket.event.title }}</h4>
+                                    <p>Event Date: {{ ticket.event.date }}</p>
+                                    <p>Location: {{ ticket.event.location }}</p>
+                                    <p>Ticket Type: {{ ticket.ticket_type }}</p>
+                                    <p>Status: {% if ticket.refunded %}Refunded{% else %}Active{% endif %}</p>
+                                    
+                                    {% if ticket.qr_code %}
+                                        <img src="{{ ticket.qr_code.url }}" alt="QR Code for {{ ticket.event.title }}" class="img-thumbnail mb-3">
+                                    {% endif %}
+                                    
+                                    <div class="d-flex">
+                                        <!-- Refund Ticket Button -->
+                                        {% if not ticket.refunded %}
+                                            <form method="POST" action="{% url 'refund_ticket' ticket.id %}" class="me-2">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-warning btn-sm">Refund Ticket</button>
+                                            </form>
+                                        {% endif %}
+
+                                        <!-- View Event Details Button -->
+                                        <a href="{% url 'event_details' ticket.event.id %}" class="btn btn-info btn-sm">View Event Details</a>
+                                    </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>You haven't booked any tickets yet.</p>
+                    {% endif %}
+            </section>
+
+            <!-- Interactive Calendar -->
+            <section>
+                <h3>Interactive Calendar</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th><a href="?sort=title">Event Name</a></th>
+                            <th><a href="?sort=date">Date</a></th>
+                            <th><a href="?sort=category">Category</a></th>
+                            <th><a href="?sort=location">Location</a></th>
+                            <th><a href="?sort=details">Details</a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in calendar_events %}
+                        <tr>
+                            <td>{{ event.title }}</td>
+                            <td>{{ event.date }}</td>
+                            <td>{{ event.category }}</td>
+                            <td>{{ event.location }}</td>
+                            <td><a href="{% url 'event_details' event.id %}" class="btn btn-info btn-sm">View Details</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Attendee Information (Organizers Only) -->
+            {% if user.is_organizer %}
+            <section>
+                <h3>Attendee Information</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Attendee</th>
+                            <th>Email</th>
+                            <th>Event</th>
+                            <th>Ticket Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in attendees_info %}
+                        <tr>
+                            <td>{{ ticket.attendee.username }}</td>
+                            <td>{{ ticket.attendee.email }}</td>
+                            <td>{{ ticket.event.title }}</td>
+                            <td>{{ ticket.ticket_type }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

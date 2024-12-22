@@ -1,0 +1,42 @@
+{% extends 'eventapp/base.html' %}
+
+{% block title %}
+Event Details
+{% endblock %}
+
+{% block content %}
+<h1>{{ event.title }}</h1>
+<p><strong>Date:</strong> {{ event.date }}</p>
+<p><strong>Location:</strong> {{ event.location }}</p>
+<p><strong>Category:</strong> {{ event.category.name }}</p>
+<p><strong>Description:</strong> {{ event.description }}</p>
+{% if event.image %}
+    <img src="{{ event.image.url }}" alt="{{ event.title }}" style="max-width:30%;">
+{% endif %}
+
+<h3>Tickets</h3>
+<table>
+    <tr>
+        <th>Price</th>
+        <th>Total Available</th>
+        <th>Buy</th>
+    </tr>
+    {% for ticket in tickets %}
+    <tr>
+        {% if ticket.tickets_available == 0 %}
+            <td><span class="badge badge-danger">Sold Out</span></td>
+        {% else %}
+            <td>
+                Early Bird: {{ ticket.price_early_bird }}<br>
+                General: {{ ticket.price_general }}<br>
+                VIP: {{ ticket.price_vip }}
+            </td>
+            <td>{{ ticket.tickets_available }}</td>
+            <td>
+                <a href="{% url 'buy_ticket' ticket.id %}" class="btn btn-primary">Buy Tickets</a>
+            </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
