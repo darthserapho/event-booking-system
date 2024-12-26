@@ -10,7 +10,7 @@ from django.db import transaction
 from io import BytesIO
 from django.core.files import File
 from django.contrib import messages
-from paypalrestsdk import Payment
+from eventproj.settings import paypalrestsdk
 from django.conf import settings
 
 def home(request):
@@ -277,7 +277,7 @@ def confirm_payment(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, attendee=request.user)
     if request.method == "POST":
         # Create PayPal payment
-        payment = Payment({
+        payment = paypalrestsdk.Payment({
             "intent": "sale",
             "payer": {
                 "payment_method": "paypal"
@@ -361,7 +361,7 @@ def payment_success(request):
     payment_id = request.GET.get('paymentId')
     payer_id = request.GET.get('PayerID')
 
-    payment = Payment.find(payment_id)
+    payment = paypalrestsdk.Payment.find(payment_id)
     if payment.execute({"payer_id": payer_id}):
         # Mark the booking as paid
         booking_id = request.session.get('booking_id')

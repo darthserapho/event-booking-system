@@ -1,0 +1,6 @@
+paypalrestsdk
+django
+python-dotenv
+django-widget-tweaks
+qrcode
+Pillow
